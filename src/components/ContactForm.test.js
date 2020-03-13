@@ -33,3 +33,32 @@ test("allows the user to submit when making a contribution to all three required
     await findByText(/karren/i);
     await findByText(/alex@karren.com/i);
 })
+
+test("prohibits user with long username to submit", async () => {
+    const { getByTestId, getByLabelText, findByText } = render(<ContactForm />);
+    
+    const firstName = getByLabelText(/first name/i);
+    const lastName = getByLabelText(/last name/i);
+    const email = getByLabelText(/email/i);
+
+    fireEvent.change(firstName, {
+        target: { name: 'firstName', value: 'Alexander'}
+    });
+    fireEvent.change(lastName, {
+        target: { name: 'lastName', value: 'Karren'}
+    });
+    fireEvent.change(email, {
+        target: { name: 'email', value: 'alex@karren.com'}
+    });
+
+    const submit = getByTestId("submit");
+    fireEvent.click(submit);
+
+    // await findByText(`{
+    //     "firstName": "Ace",
+    //     "lastName": "Karren",
+    //     "email": "alex@karren.com",
+    //     "message": ""
+    //   }`)
+    await findByText(/error/i);
+})
