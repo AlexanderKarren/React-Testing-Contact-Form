@@ -1,22 +1,35 @@
 import React from "react";
-import { render, fireEvent, findByTestId } from "@testing-library/react";
+import { render, fireEvent, getByTestId } from "@testing-library/react";
 import ContactForm from "./ContactForm";
+import { act } from "react-dom/test-utils";
 
-test("allows the user to submit when making a contribution to all three required fields", () => {
-    const { getAllByText, getByLabelText } = render(<ContactForm />);
+test("allows the user to submit when making a contribution to all three required fields", async () => {
+    const { getByTestId, getByLabelText, findByText } = render(<ContactForm />);
+    
+    const firstName = getByLabelText(/first name/i);
+    const lastName = getByLabelText(/last name/i);
+    const email = getByLabelText(/email/i);
 
-    fireEvent.change(getByLabelText(/first name/i), {
-        target: { name: 'firstName', value: 'Alexander'}
+    fireEvent.change(firstName, {
+        target: { name: 'firstName', value: 'Ace'}
     });
-    fireEvent.change(getByLabelText(/last name/i), {
+    fireEvent.change(lastName, {
         target: { name: 'lastName', value: 'Karren'}
     });
-    fireEvent.change(getByLabelText(/email/i), {
-        target: { name: 'email', value: 'alex@Karren.com'}
+    fireEvent.change(email, {
+        target: { name: 'email', value: 'alex@karren.com'}
     });
 
-    const submit = getAllByText(/submit/i);
-    console.log(submit);
+    const submit = getByTestId("submit");
+    fireEvent.click(submit);
 
-    // fireEvent.click();
+    // await findByText(`{
+    //     "firstName": "Ace",
+    //     "lastName": "Karren",
+    //     "email": "alex@karren.com",
+    //     "message": ""
+    //   }`)
+    await findByText(/ace/i);
+    await findByText(/karren/i);
+    await findByText(/alex@karren.com/i);
 })
